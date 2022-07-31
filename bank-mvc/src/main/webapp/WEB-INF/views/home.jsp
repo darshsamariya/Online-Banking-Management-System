@@ -41,8 +41,8 @@
                 <p>We are your partner on the road to success.</p>
      <div id="myGroup">
     <button class="btn dropdown" data-toggle="collapse" data-target="#login,#message" data-parent="#myGroup"><i class="icon-chevron-right"></i> Login  </button>
-    <button class="btn dropdown" data-toggle="collapse" data-target="#cus" data-parent="#myGroup"><i class="icon-chevron-right"></i> Customer</button>
-    <button class="btn dropdown" data-toggle="collapse" data-target="#emp" data-parent="#myGroup"><i class="icon-chevron-right"></i> Employee</button>
+    <button class="btn dropdown" data-toggle="collapse" data-target="#cus" data-parent="#myGroup"><i class="icon-chevron-right"></i>Signup Customer</button>
+    <button class="btn dropdown" data-toggle="collapse" data-target="#emp" data-parent="#myGroup"><i class="icon-chevron-right"></i>Signup Employee</button>
 
     <div class="accordion-group">
         <div class="collapse indent" id="login">

@@ -27,15 +27,15 @@
           <a href="#" class="tab-link" data-div="div-one">     <button class="btn dropdown  list-group-item list-group-item-action bg-transparent second-text fw-bold" ><i
                         class="fas fa-tachometer-alt me-2"></i><i class="bi-house-door-fill"></i>Dashboard</button></a>
            <a href="#" class="tab-link" data-div="div-two">     <button class="btn dropdown  list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#fundtransfer" data-parent="#myGroup"><i
-                        class="fas fa-project-diagram me-2"></i><i class="bi-cash-coin"></i>Fund Transfer</button></a>
+                        class="fas fa-project-diagram me-2"></i><i class="bi-cash-coin"></i>Deposit Money</button></a>
           <a href="#" class="tab-link" data-div="div-three">      <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
                         class="fas fa-chart-line me-2"></i><i class="bi-table"></i>My transaction</button></a>
              <a  href="#" class="tab-link" data-div="div-four">   <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
                         class="fas fa-paperclip me-2"></i><i class="bi-person-circle"></i>My Details</button></a>
                <a  href="#search" class="tab-link" data-div="div-five"> <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
                         class="fas fa-shopping-cart me-2"></i><i class="bi-chat-dots-fill"></i>Search customer</button></a>
-                <a> <button class="btn dropdown  list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
-                        class="fas fa-gift me-2"></i><i class="bi-gear-fill"></i>Settings</button></a>
+                          <a  href="#search" class="tab-link" data-div="div-nine"> <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
+                        class="fas fa-shopping-cart me-2"></i><i class="bi-chat-dots-fill"></i>View All loans</button></a>
                <a href="logout"> <button class="btn dropdown list-group-item list-group-item-action bg-transparent text-primary fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
                         class="fas fa-power-off me-2"></i><i class="bi-box-arrow-right"></i>Logout</button></a>
 
@@ -48,7 +48,7 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
-                    <h2 class="fs-2 m-0">Welcome ${u.firstname}</h2>
+                    <h2 class="fs-2 m-0" style="text-transform: capitalize;">Welcome ${u.firstname}</h2>
                 </div>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,7 +162,7 @@
                
                      // q="select * from account union select * from deposit order by date desc";
       
-                  System.out.println(q);
+                ///  System.out.println(q);
                   rs=st.executeQuery(q);
 
           }
@@ -203,7 +203,7 @@
                  <div class="row my-5 div-two content ">
                    <div class="container p-0">
         <div class="card px-4">
-            <p class="h8 py-3">Fund Transfer </p>
+            <p class="h8 py-3">Deposit Money </p>
        
                <div id="error_message"></div>
             <form action="deposit" method="post">
@@ -339,7 +339,7 @@
            i=0;
           try
           {
-                 q2="select * from account union select * from deposit order by date desc";;
+                 q2="select * from transfer union select * from deposit order by date desc";;
                   rs2=st.executeQuery(q2);
 
           }
@@ -400,15 +400,16 @@
                             <thead>
                                 <tr>
                                     <th scope="col" width="50">#</th>
+                                     <th scope="col">Loan ID</th>
                                     <th scope="col">CustomerID</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Curent Balance</th>
+                                    <th scope="col">Requirement</th>
                                     <th scope="col">Loan Amount</th>
                                      <th scope="col">Period</th>
                                       <th scope="col">ROI</th>
-                                       <th scope="col">Interest Value</th>
-                                         <th scope="col">Net Value</th>
                                           <th scope="col">Date Applied</th>
+                                          <th scope="col">Pay per month</th>
+                                      <th scope="col" class="text-justify">Status</th>
                                 </tr>
                             </thead>
           <%
@@ -435,18 +436,31 @@
                 
                                 <tr>
                                     <th scope="row"><%=i %></th>
-                                   
+                                   <td><%=rs3.getString("loan_id") %></td>
                                     <td><%=rs3.getString("cus_id") %></td>
                                            <td><%=rs3.getString("name") %></td>
-                                                 <td class="text-success">+<%=rs3.getDouble("balance") %></td>
-                                                      <td class="text-danger">-<%=rs3.getDouble("amount_applied") %></td>
-                                                           <td><%=rs3.getInt("period") %></td>
-                                                                <td><%=rs3.getDouble("roi") %></td>
-                                                                <td><%=rs3.getDouble("interest_val") %></td>
-                                                                <td><%=rs3.getDouble("net_val") %></td>
-                                                                        <td><%=rs3.getString("status") %></td>
-                                                                 <td><%=rs3.getDate("date_app") %></td>
+                                              <td><%=rs3.getString("req") %></td>
+                                                      <td><%=rs3.getDouble("amount_applied") %></td>
+                                                           <td><%=rs3.getInt("period") %> Months</td>
+                                                                <td><%=rs3.getDouble("roi") %> %</td>
+                                                                  <td><%=rs3.getDate("date_app") %></td>
+                                                                     <td><%=rs3.getDouble("pay_per_month") %></td>                                  
+                                                                        <td>
+                                                                    
+                                                                          <form action="loanstatus" method="post">
+                                                            	 <button style="background-color:green; color: white;" name="status" value="accept" type="submit"  >
+                                                            	  <span class="block">Accept</span>
+                                                            	  </button>
+                                                            	   <input type="hidden" value="<%=rs3.getDouble("amount_applied") %>" name="amt"/>
+                                                            	  <input type="hidden" value="<%=rs3.getString("cus_id") %>" name="cus_id"/>
+                                                            	  <input type="hidden" value="<%=rs3.getString("loan_id") %>" name="loan_id"/>
+                                                            	  <button style="background-color: red; color: white"  name="status" value="reject" type="submit">
+                                                                  <span class="unblock">Reject</span>	
+                                                            	 </button>
+                                                            	 </form>
+                                                            	 </td>
                                 </tr>
+                                                            
                                   <%
             }}
 %>
@@ -456,8 +470,73 @@
                     </div>
                 </div>
                 
-                <!-- ---------------- -->
-  
+                <!-- ----------NINE------ -->
+           <div class="row my-5 div-nine content">
+                    <h3 class="fs-4 mb-3">All loans status</h3>
+                 
+                    <div class="col">
+                        <table class="table bg-white rounded shadow-sm  table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="50">#</th>
+                                     <th scope="col">Loan ID</th>
+                                    <th scope="col">CustomerID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Requirement</th>
+                                    <th scope="col">Loan Amount</th>
+                                     <th scope="col">Period</th>
+                                      <th scope="col">ROI</th>
+                                          <th scope="col">Date Applied</th>
+                                      <th scope="col" class="text-justify">Status</th>
+                                          <th scope="col">Net Amount Paid</th>
+                                </tr>
+                            </thead>
+          <%
+          ResultSet rs4=null;
+          String q4="";
+           i=0;
+          try
+          {
+                 q4="select * from loanapplication order by date_app desc ";
+                  rs4=st.executeQuery(q4);
+
+          }
+          catch(Exception e)
+          {
+              System.out.println("error is "+e);
+          }
+          %>
+                            <tbody>
+                                <% if(rs4!=null)
+                                	{while(rs4.next()){
+            i++;
+        %>
+    
+                
+                                <tr>
+                                    <th scope="row"><%=i %></th>
+                                   <td><%=rs4.getString("loan_id") %></td>
+                                    <td><%=rs4.getString("cus_id") %></td>
+                                           <td><%=rs4.getString("name") %></td>
+                                              <td><%=rs4.getString("req") %></td>
+                                                      <td><%=rs4.getDouble("amount_applied") %></td>
+                                                           <td><%=rs4.getInt("period") %> Months</td>
+                                                                <td><%=rs4.getDouble("roi") %> %</td>
+                                                                  <td><%=rs4.getDate("date_app") %></td>
+                                                                   <td>  <b> <%=rs4.getString("status") %> </b></td>
+                                                                      <td><%=rs4.getDouble("net_val") %></td>
+                                                            	 </form>
+                                                            	 </td>
+                                </tr>
+                                                            
+                                  <%
+            }}
+%>
+                             
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
             </div>
         </div>

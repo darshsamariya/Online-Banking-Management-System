@@ -9,6 +9,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import com.bankmvc.entities.customer;
 import com.bankmvc.entities.employee;
 
 
@@ -40,7 +41,7 @@ public class employeedaoimpel {
 			return r;
 		}
 		
-		public employee check(String email,String password,String type)
+		public employee check(String email,String password,String type)   //check employee
 		{
 			String query="select * from "+type+" where email=? and password=?";
 			employee s=null;
@@ -68,22 +69,42 @@ public class employeedaoimpel {
 		 return s;
 		}
 		
-		public void deposit(String ce,String be,String name,String account,double credit,double debit,double o_balance,double c_balance)
+		public void deposit(String ce,String be,String name,String account,double credit,double debit,double o_balance,double c_balance,double int_val)
 		{
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			Date date = new Date();
+			Date date = new Date();                                       //deposit money
 		String y=formatter.format(date);
 		try{
-			System.out.println(y);
+			//System.out.println(y);
 		date=formatter.parse(y);
-		System.out.println(date);
+		//System.out.println(date);
 		}
 		catch(Exception e)
 		{}
 			String query="insert into deposit (cus_id,ben_id,name,account,credit,debit,o_balance,c_balance,date) values(?,?,?,?,?,?,?,?,?)";
 		  int r=this.template.update(query,ce,be,name,account,credit,debit,o_balance,c_balance,date);
-		  String sql="update customer set balance=? where c_id=?";
-		  int k=this.template.update(sql,c_balance,be);
+		  String sql="";
+		  int k=0;
+		  if(account.equals("LOAN MONEY"))
+		  {
+		sql="update customer set balance=? , debit=? where c_id=?";
+		System.out.println("hello");
+		
+		k=this.template.update(sql,c_balance,int_val,be);
+		  }
+		  else
+		  {
+			  sql="update customer set balance=? where c_id=?";
+			   k=this.template.update(sql,c_balance,be);
+		  }
+	
 		//  System.out.println(k+"  "+sql);
 		}
+		
+		public void grant(String loan_id,String status)              //accept loans
+		{
+			String query="update loanapplication set status='"+status+"' where loan_id=?";
+			int r=this.template.update(query,loan_id);
+		}
+	
 }

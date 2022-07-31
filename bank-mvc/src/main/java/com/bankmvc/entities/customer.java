@@ -38,10 +38,20 @@ public String c_id;
 	public int t_limit;
 	public int t_lock;
 	public double balance;
+	public double debit;
+	
+	public double getDebit() {
+		return debit;
+	}
+	public void setDebit(double debit) {
+		debit=Math.round(debit*100.0)/100.0;
+		this.debit = debit;
+	}
 	public double getBalance() {
 		return balance;
 	}
 	public void setBalance(double balance) {
+		balance=Math.round(balance*100.0)/100.0;
 		this.balance = balance;
 	}
 	public int getT_limit() {

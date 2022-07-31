@@ -164,7 +164,7 @@ a {
     font-weight: 600;
 }
 
-#error_message,#error_message2{
+#error_message,#error_message2,#error_message3{
   margin-bottom: 20px;
   background: #fe8b8e;
   padding: 0px;

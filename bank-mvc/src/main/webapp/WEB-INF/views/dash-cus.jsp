@@ -30,10 +30,8 @@
                         class="fas fa-chart-line me-2"></i><i class="bi-table"></i>View Statement</button></a>
              <a  href="#" class="tab-link" data-div="div-four">   <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
                         class="fas fa-paperclip me-2"></i><i class="bi-person-circle"></i>My Details</button></a>
-               <a> <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
-                        class="fas fa-shopping-cart me-2"></i><i class="bi-chat-dots-fill"></i>Support</button></a>
-                <a> <button class="btn dropdown  list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
-                        class="fas fa-gift me-2"></i><i class="bi-gear-fill"></i>Settings</button></a>
+               <a href="#" class="tab-link" data-div="div-seven"> <button class="btn dropdown list-group-item list-group-item-action bg-transparent second-text fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
+                        class="fas fa-shopping-cart me-2"></i><i class="bi-chat-dots-fill"></i>Pay Loan Money</button></a>
                <a href="logout"> <button class="btn dropdown list-group-item list-group-item-action bg-transparent text-primary fw-bold" data-toggle="collapse" data-target="#attrs" data-parent="#myGroup"><i
                         class="fas fa-power-off me-2"></i><i class="bi-box-arrow-right"></i>Logout</button></a>
 
@@ -46,7 +44,7 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4">
                 <div class="d-flex align-items-center">
                     <i class="fas fa-align-left primary-text fs-4 me-3" id="menu-toggle"></i>
-                    <h2 class="fs-2 m-0">Welcome ${u.firstname}</h2>
+                    <h2 class="fs-2 m-0" style="text-transform: capitalize;">Welcome ${u.firstname}</h2>
                 </div>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,33 +75,35 @@
                         </div>
                     </div>
 
+                <div class="col-md-3">
+                        <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                            <div>
+                                <h3 class="fs-2 text-danger">${u.debit }</h3>
+                                <p class="fs-5">Debit Loan Money</p>
+                            </div>
+                            <i style="transform:scale(1.8)" class="bi bi-patch-minus"></i>
+                        </div>
+                    </div>
+
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                             <div style="cursor: pointer;" class="tab-link" data-div="div-five">
                                 <h3 class="fs-2">Apply</h3>
                                 <p class="fs-5">For Loans</p>
                             </div>
-                       <i style="transform:scale(1.8)" class="bi-box-arrow-in-down-right"> </i>
+                       <i style="transform:scale(1.8)" class="bi bi-calendar-check"> </i>
                         </div>
                     </div>
 
-                    <div class="col-md-3">
-                        <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                            <div>
-                                <h3 class="fs-2">7%</h3>
-                                <p class="fs-5">Interest</p>
-                            </div>
-                            <i style="transform:scale(1.8)" class="bi-arrow-up-right-square"></i>
-                        </div>
-                    </div>
+                   
 
                     <div class="col-md-3">
                         <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                            <div>
-                                <h3 class="fs-2">New</h3>
-                                <p class="fs-5">Offers</p>
+                           <div style="cursor: pointer;" class="tab-link" data-div="div-six">
+                                <h3 class="fs-2">View</h3>
+                                <p class="fs-5">Loan Status</p>
                             </div>
-                         <i style="transform:scale(1.8)" class="bi-bookmark-heart-fill"></i>
+                         <i style="transform:scale(1.8)" class="bi bi-folder2-open"></i>
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,13 @@
            <h3> <%=m %></h3>
 
             </div>
-                
+                <%
+          	  String connectionURL = "jdbc:mysql://localhost:3306/mvcbank";
+                Class.forName("com.mysql.jdbc.Driver");
+                   // Get a Connection to the database
+                 Connection co=DriverManager.getConnection(connectionURL, "root", "5900"); 
+                   Statement st=co.createStatement();
+                %>
                 <!-- --------------------------------------------------Two -->
                  <div class="row my-5 div-two content ">
                    <div class="container p-0">
@@ -195,12 +201,8 @@
           int i=0;
           try
           {
-        	  String connectionURL = "jdbc:mysql://localhost:3306/mvcbank";
-               Class.forName("com.mysql.jdbc.Driver");
-                  // Get a Connection to the database
-                Connection co=DriverManager.getConnection(connectionURL, "root", "5900"); 
-                  Statement st=co.createStatement();
-                  q="select * from account where cus_id='"+session.getAttribute("c_id")+"' union select * from mvcbank.deposit where ben_id='"+session.getAttribute("c_id")+"'	 order by date desc";
+
+                  q="select * from transfer where cus_id='"+session.getAttribute("c_id")+"' union select * from mvcbank.deposit where ben_id='"+session.getAttribute("c_id")+"'	 order by date desc";
                 rs=st.executeQuery(q);
 
           }
@@ -314,23 +316,19 @@
                         <input class="form-control mb-3" type="text" onchange="calculateAmount()" value="" onkeypress='onlynumber(event)' id="amt" name="amt" placeholder="Loan Amount">
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-6">
                     <div class="d-flex flex-column">
                         <p class="text mb-1">Load Period</p>
                         <select class="form-select"  onchange="calculateAmount()" name="data" id="data" aria-label="Default select example">
   <option value="" disabled selected>Open this select menu</option>
-  <option value="3 12">3 Months 12% Interest</option>
+  <option value="3 10">3 Months 10% Interest</option>
   <option value="6 9">6 Months 9% Interest</option>
   <option value="12 7">12 Months 7% Interest</option>
 </select>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="d-flex flex-column">
-                        <p class="text mb-1">Effective Amount</p>
-                        <input class="form-control mb-3" type="text" id="tot-amount" name="tot-amount" readonly>
-                    </div>
-                </div>
+           
+    
                 <div class="col-6">
                     <div class="d-flex flex-column">
                         <p class="text mb-1">Password</p>
@@ -348,12 +346,16 @@
                   	 var amount= document.getElementById("amt").value;
                     	console.log(amount);
                     	console.log(arr);
-						var tot_price=(amount*arr[0]*arr[1]);
-						tot_price=parseInt(amount)+(tot_price/(100*12));
-						 tot_price=parseFloat(tot_price).toFixed(2);
-						//display
-						var divobj=document.getElementById('tot-amount');
-						divobj.value=tot_price;
+						
+						var mont_price=(amount/(arr[0]));
+						console.log(mont_price);
+						mont_price=parseFloat(mont_price).toFixed(2);
+						var divobj2=document.getElementById('month-amount');
+						divobj2.value=mont_price;
+						
+						
+			
+						
 					}
                     </script>
                 
@@ -362,11 +364,108 @@
         </div>
     </div>
                 </div>
-                
-                
-                
-                
+          
                 <!-- ------------------------------------------------ -->
+                <!-- ----------------------------------SIX ------------------>
+                 <div class="row my-5 div-six content">
+                    <h3 class="fs-4 mb-3">Loans Applied</h3>
+                 
+                    <div class="col">
+                        <table class="table bg-white rounded shadow-sm  table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="50">#</th>
+                                     <th scope="col">Loan ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Requirement</th>
+                                    <th scope="col">Loan Amount</th>
+                                     <th scope="col">Period</th>
+                                      <th scope="col">ROI</th>
+                                              <th scope="col" class="text-justify">Status</th>
+                                          <th scope="col">Date Applied</th>
+                                            <th scope="col">Amount left</th>
+                                       <th scope="col">Amount Paid</th>
+                                           <th scope="col">Interest Charge</th>
+                                </tr>
+                            </thead>
+          <%
+          ResultSet rs3=null;
+          String q3="";
+          String cus_id=(String)session.getAttribute("c_id");
+           i=0;
+          try
+          {
+                 q3="select * from loanapplication where cus_id='"+cus_id+"'";
+                  rs3=st.executeQuery(q3);
+
+          }
+          catch(Exception e)
+          {
+              System.out.println("error is "+e);
+          }
+          %>
+                            <tbody>
+                                <% if(rs3!=null)
+                                	{while(rs3.next()){
+            i++;
+        %>
+    
+                
+                                <tr>
+                                    <th scope="row"><%=i %></th>
+                                   <td><%=rs3.getString("loan_id") %></td>
+                                
+                                           <td><%=rs3.getString("name") %></td>
+                                              <td><%=rs3.getString("req") %></td>
+                                                      <td><%=rs3.getDouble("amount_applied") %></td>
+                                                           <td><%=rs3.getInt("period") %> Months</td>
+                                                                <td><%=rs3.getDouble("roi") %> %</td>
+                                                                  <td style="text-transform: capitalize;"><b><%=rs3.getString("status") %></b></td>
+                                                                  <td><%=rs3.getDate("date_app") %></td>
+                                                                      <td><%=rs3.getDouble("amt_left") %></td>
+                                                                         <td><%=rs3.getDouble("net_val") %></td>
+                                                                             <td><%=rs3.getDouble("int_val") %></td>
+                                                                       
+                                </tr>
+                                                            
+                                  <%
+            }}
+%>
+                             
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                         <!-- ------------------------------------------------ -->
+                         
+                         <!-- -----------------------------------Seven------------------ -->
+                           <div class="row my-5 div-seven content">
+                   <div class="container p-0">
+        <div class="card px-4">
+            <p class="h8 py-3">LOAN Amount Transfer </p>
+ 
+               <div id="error_message3"></div>
+            <form action="getloandetails" method="post">
+            <div class="row gx-3">
+                <div class="col-12">
+                    <div class="d-flex flex-column">
+                        <p class="text mb-1">Loan ID</p>
+                        <input type="hidden" name="customer_id"/>
+                        <input class="form-control mb-3" type="text" id="loan_id" name="loan_id" placeholder="Enter Loan ID">
+                    </div>
+                </div>  
+                    <input type="submit"  onclick="return validateloandeposit()" class="btn btn-primary mb-3">
+            </div>
+            </form>
+        </div>
+    </div>
+                </div>
+                <!-- ----------------------------------------- -->
+                
+                
+                
+                
+                
 
             </div>
         </div>
@@ -381,6 +480,22 @@ $('.tab-link').click(function(){
 	   var contClass = $(this).data('div');
 	   $('.content').hide().filter('.' + contClass).show()
 	})
+</script>
+<script>
+function validateloandeposit() {
+	console.log("inside loan deposit");
+	  var error_message = document.getElementById("error_message3");
+	  error_message.style.padding = "10px";
+	  var text;
+	  var loan_id = document.getElementById("loan_id").value;
+	  if(loan_id.length!=10){
+		    text = "Please Enter 10 digit LOAN ID";
+		    error_message.innerHTML = text;
+		    return false;
+		  }
+	  alert("Request Submitted Successfully!");
+	  return true;
+}
 </script>
 <script>
 function validate(){
@@ -430,8 +545,8 @@ function valid() {
 	  var error_message = document.getElementById("error_message2");
 	  error_message.style.padding = "10px";
 	  var text;
-	  if(req.length<=9){
-		    text = "Please Enter at least 9 charcters";
+	  if(req.length<=5){
+		    text = "Please Enter at least 5 charcters";
 		    error_message.innerHTML = text;
 		    return false;
 		  }

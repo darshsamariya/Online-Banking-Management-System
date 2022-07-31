@@ -28,6 +28,7 @@ import com.bankmvc.dao.employeedaoimpel;
 import com.bankmvc.entities.customer;
 import com.bankmvc.entities.employee;
 import com.bankmvc.entities.limit;
+import com.bankmvc.hmac.hmac;
 import com.bankmvc.*;
 
 
@@ -38,21 +39,23 @@ public class app {
     customerdaoimpel cdao;
 	@Autowired
 employeedaoimpel edao;
-
-	@RequestMapping("/check")
+	
+	hmac hx=new hmac();
+	@RequestMapping("/check")                       //checks for login as customer /employee
 	   public String checklogin(@RequestParam("email") String email,@RequestParam("password") String password,Model m,HttpSession hs) throws InvalidKeyException, NoSuchAlgorithmException
     {
-		String secret=email;
+		password=hx.change(email,password);
+		/*String secret=email;
 		String message=password;
-		Mac sha256=Mac.getInstance("HmacSHA256");
+		Mac sha256=Mac.getInstance("HmacSHA256");            
 		
 		SecretKeySpec s_key=new SecretKeySpec(secret.getBytes(),"HmacSHA256");
 		sha256.init(s_key);
 		String hash=Base64.encodeBase64String(sha256.doFinal(message.getBytes()));
-		password=hash;
+		password=hash;*/
 		//System.out.println(password);
 		String type="";
-if(email.endsWith("@tvscredit.com"))
+if(email.endsWith("@tvscredit.com"))       //for employee
 {
 	type="employee";
 	limit l=cdao.checklimit(email,type);
@@ -91,7 +94,7 @@ hs.setAttribute("email",e.getEmail());
 hs.setAttribute("e_id",e.getE_id());
 return "redirect:dash-emp";
 }
-else
+else                 //for customer
 {
 	type="customer";
 	limit l=cdao.checklimit(email,type);
@@ -123,7 +126,7 @@ else
 		return "redirect:home";
 	}
 	cdao.update(email,4,1, type);
-	System.out.println(c.toString());
+	//System.out.println(c.toString());
 	hs.setAttribute("customer",c);
 	hs.setAttribute("block","LoggedIN");
 hs.setAttribute("email",c.getEmail());
@@ -135,14 +138,14 @@ hs.setAttribute("c_id",c.getC_id());
     }
 	
 
-@RequestMapping("/logout")
+@RequestMapping("/logout")            //logout 
 public String logout(HttpSession s)
 {
 	s.invalidate();
 	return "redirect:home";
 }
 @RequestMapping({"/home","/"})
-String home()
+String home()                  //home page
 {
 	
 	return "home";

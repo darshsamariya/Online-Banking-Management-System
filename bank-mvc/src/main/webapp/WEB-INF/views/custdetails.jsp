@@ -77,8 +77,8 @@ button:hover .unblock {
                                                             <p class="text-muted"><%=c.getBalance()%></p>
                                                         </div>
                                                          <div class="col-6 mb-3">
-                                                            <h6>Limit</h6>
-                                                            <p class="text-muted"><%=c.getT_limit()%></p>
+                                                            <h6>Debit</h6>
+                                                            <p class="text-muted"><%=c.getDebit()%></p>
                                                         </div>
                                                          
                                                           <div class="col-6 mb-3">
@@ -116,7 +116,13 @@ button:hover .unblock {
                         </div>
                     </section>
                     <%} %>
-                    
+                    <%
+                    String connectionURL = "jdbc:mysql://localhost:3306/mvcbank";
+                    Class.forName("com.mysql.jdbc.Driver");
+                       // Get a Connection to the database
+                     Connection co=DriverManager.getConnection(connectionURL, "root", "5900"); 
+                       Statement st=co.createStatement();
+                    %>
                     <%
                     String d1=(String)session.getAttribute("date1");
                     String d2=(String)session.getAttribute("date2");
@@ -144,22 +150,21 @@ button:hover .unblock {
                             </thead>
           <%
           ResultSet rs=null;
+
           String q="";
           int i=0;
           try
           {
-        	  String connectionURL = "jdbc:mysql://localhost:3306/mvcbank";
-               Class.forName("com.mysql.jdbc.Driver");
-                  // Get a Connection to the database
-                Connection co=DriverManager.getConnection(connectionURL, "root", "5900"); 
-                  Statement st=co.createStatement();
+        	
                   if(c!=null)
                   {
-                  q="select * from account where cus_id='"+c.getC_id()+"' union select * from mvcbank.deposit where ben_id='"+c.getC_id()+"'	 order by date desc";
+                  q="select * from transfer where cus_id='"+c.getC_id()+"' union select * from mvcbank.deposit where ben_id='"+c.getC_id()+"'	 order by date desc";
+                
+
                   }
                   else
                   {
-                	  q="select * from account where date between '"+d1+"' and '"+d2+"' union select * from mvcbank.deposit where date between '"+d1+"' and '"+d2+"' order by date desc";
+                	  q="select * from transfer where date between '"+d1+"' and '"+d2+"' union select * from mvcbank.deposit where date between '"+d1+"' and '"+d2+"' order by date desc";
                   }
                 rs=st.executeQuery(q);
 System.out.println(q);	
@@ -198,6 +203,62 @@ System.out.println(q);
                 </div>
                 <%} %>
                 <%
+                if(c!=null)
+                {
+                    ResultSet rs3=null;
+                    String q3="select * from loanapplication where cus_id='"+c.getC_id()+"' order by date_app desc";
+                    rs3=st.executeQuery(q3);
+                    int i=0;
+                %>
+                	
+                	 <h3 class="fs-4 mb-3">Recent Loans</h3>
+                    <div class="col">
+                        <table class="table bg-white rounded shadow-sm  table-hover">
+                            <thead>
+                                <tr>
+                                  <th scope="col" width="50">#</th>
+                                     <th scope="col">Loan ID</th>
+                                    <th scope="col">CustomerID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Requirement</th>
+                                    <th scope="col">Loan Amount</th>
+                                     <th scope="col">Period</th>
+                                      <th scope="col">ROI</th>
+                                              <th scope="col" class="text-justify">Status</th>
+                                          <th scope="col">Date Applied</th>
+                                            <th scope="col">Amount left</th>
+                                       <th scope="col">Amount Paid</th>
+                                </tr>
+                            </thead>
+                              <tbody>
+                              
+                                <%	while(rs3.next()){
+                                    i++;
+        %>
+                                <tr>
+                                    <th scope="row"><%=i %></th>
+                                   <td><%=rs3.getString("loan_id") %></td>
+                                    <td><%=rs3.getString("cus_id") %></td>
+                                           <td><%=rs3.getString("name") %></td>
+                                              <td><%=rs3.getString("req") %></td>
+                                                      <td><%=rs3.getDouble("amount_applied") %></td>
+                                                           <td><%=rs3.getInt("period") %> Months</td>
+                                                                <td><%=rs3.getDouble("roi") %> %</td>
+                                                                  <td style="text-transform: capitalize;"><b><%=rs3.getString("status") %></b></td>
+                                                                  <td><%=rs3.getDate("date_app") %></td>
+                                                                      <td><%=rs3.getDouble("amt_left") %></td>
+                                                                         <td><%=rs3.getDouble("net_val") %></td>
+                                                                       
+                                </tr>
+                                                            
+                                  <%
+            }
+%>
+                             
+                            </tbody>
+                        </table>
+                    </div>
+                <%}
                 if(c!=null)
                 {
                 	session.removeAttribute("custid");

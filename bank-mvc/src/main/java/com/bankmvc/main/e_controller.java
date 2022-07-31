@@ -26,6 +26,7 @@ import com.bankmvc.dao.customerdaoimpel;
 import com.bankmvc.dao.employeedaoimpel;
 import com.bankmvc.entities.customer;
 import com.bankmvc.entities.employee;
+import com.bankmvc.hmac.hmac;
 
 @Controller
 public class e_controller {
@@ -35,10 +36,11 @@ employeedaoimpel edao;
 	@Autowired
 	customerdaoimpel cdao;
 	
-	@RequestMapping("/insertemp")
+	hmac hx=new hmac();
+	
+	@RequestMapping("/insertemp")   //insert employee
 	public String insertemp(@ModelAttribute employee e,HttpSession hs)
 	{
-		System.out.println(e.toString());
 		int r=edao.insertemployee(e);
 		if(r==1)
 		{
@@ -55,7 +57,7 @@ employeedaoimpel edao;
 		return "redirect:home";
 	}
 	
-	@RequestMapping("/dash-emp")
+	@RequestMapping("/dash-emp")         //customer dashboard
 	public ModelAndView emp(HttpSession hs)
 	{
 		ModelAndView mv=new ModelAndView();
@@ -68,7 +70,6 @@ employeedaoimpel edao;
 			return mv;
 		}
 		mv.addObject("u",e);
-		System.out.println("inside dash  emp");
 		//System.out.println(mv);
 		mv.setViewName("dash-emp");
 		return mv;
@@ -76,21 +77,14 @@ employeedaoimpel edao;
 	
 	
 
-	@RequestMapping(value="/deposit",method=RequestMethod.POST)
+	@RequestMapping(value="/deposit",method=RequestMethod.POST)  //deposit money
 	public String transfer(@RequestParam("c_id") String c_id,@RequestParam("account")String account,@RequestParam("amount") double amount,@RequestParam("password") String password,HttpSession hs) throws NoSuchAlgorithmException, InvalidKeyException
 	{
-		  amount = Math.round(amount*100)/100;
+		  amount = Math.round(amount*100.0)/100.0;
 		//System.out.println(hs);
 		employee e=(employee)hs.getAttribute("employee");
 //		System.out.println(c.toString());
-		String secret=(String)hs.getAttribute("email");
-		String message=password;
-		Mac sha256=Mac.getInstance("HmacSHA256");
-		SecretKeySpec s_key=new SecretKeySpec(secret.getBytes(),"HmacSHA256");
-		sha256.init(s_key);
-		String hash=Base64.encodeBase64String(sha256.doFinal(message.getBytes()));
-		password=hash;
-
+		password=hx.change((String)hs.getAttribute("email"),password);
 		 if(password.equals(e.getPassword())==false)
 		{
 			hs.setAttribute("fund","password not match");
@@ -103,8 +97,7 @@ employeedaoimpel edao;
 			hs.setAttribute("fund","account not exist");
 			return "redirect:dash-emp";
 		}
-		System.out.println("Tranfer to "+k.toString());
-			edao.deposit(e.getE_id(),c_id,k.getFirstname(),"Cash Deposit",amount,0,k.getBalance(),k.getBalance()+amount);
+			edao.deposit(e.getE_id(),c_id,k.getFirstname(),"Cash Deposit",amount,0,k.getBalance(),k.getBalance()+amount,0);
 			hs.setAttribute("fund","Transfer Done successfully");
 			k.setBalance(k.getBalance()+amount);
 			return "redirect:dash-emp";
@@ -113,7 +106,7 @@ employeedaoimpel edao;
 		
 	}
 	
-	@RequestMapping(value = "/getcustomer" , method = RequestMethod.POST)
+	@RequestMapping(value = "/getcustomer" , method = RequestMethod.POST)  //get customer details
    public String getcustomer(@RequestParam("cid") String cid,ModelAndView mv,HttpSession hs)
    {
 		
@@ -124,11 +117,10 @@ employeedaoimpel edao;
 			return "redirect:dash-emp";
 		}
 hs.setAttribute("custid",c);
-System.out.println(c.toString());
 		return "custdetails";
    }
 	
-	@RequestMapping(value="/unblock",method=RequestMethod.POST)
+	@RequestMapping(value="/unblock",method=RequestMethod.POST)   //unblock the account
 	public String unblock(@RequestParam("cid") String cid,HttpSession hs)
 	{
 		cdao.update(cid, 4,1,"unblock");
@@ -138,14 +130,33 @@ System.out.println(c.toString());
 	}
 	
 	
-	@RequestMapping(value = "/customdate" , method = RequestMethod.POST)
+	@RequestMapping(value = "/customdate" , method = RequestMethod.POST)  //custom date for statement
 	public String getcustomdate(@RequestParam("d1") String d1,@RequestParam String d2,HttpSession hs)
 	{
-		System.out.println(d1);
-		System.out.println(d2);
 		hs.setAttribute("date1",d1);
 		hs.setAttribute("date2",d2);
 		return "custdetails";
+	}
+	
+	@RequestMapping(value = "/loanstatus" , method = RequestMethod.POST)   //loan status
+	public String loanstatus(@RequestParam("status") String status,@RequestParam("cus_id") String cus_id,@RequestParam("loan_id") String loan_id,@RequestParam("amt") Double amt, HttpSession hs)
+	{
+		String emp_id=(String) hs.getAttribute("e_id");
+		amt=Math.round(amt*100.0)/100.0;
+		if(status.equals("accept"))
+		{
+			customer c=cdao.check(cus_id,cus_id,"get");
+			System.out.println(c.toString());
+		edao.grant(loan_id,"accepted");
+		edao.deposit(emp_id,c.getC_id(),c.getFirstname(),"LOAN MONEY",amt,0,c.getBalance(),c.getBalance()+amt,c.getDebit()+amt);
+			hs.setAttribute("fund","Loan Granted Successfully");
+		}
+		else
+		{
+			edao.grant(loan_id,"rejected");
+			hs.setAttribute("fund","Loan Rejected ");
+		}
+		return  "redirect:dash-emp";
 	}
 	
 }
